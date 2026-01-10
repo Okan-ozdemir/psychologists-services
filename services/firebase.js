@@ -4,14 +4,14 @@ import { getDatabase, ref, set, get, push, update, remove } from 'firebase/datab
 
 // Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyDJag4KRMEm8XsMPBSvU5LG-g8CQavfqEI",
-  authDomain: "psychologists-services-37310.firebaseapp.com",
-  databaseURL: "https://psychologists-services-37310-default-rtdb.firebaseio.com",
-  projectId: "psychologists-services-37310",
-  storageBucket: "psychologists-services-37310.firebasestorage.app",
-  messagingSenderId: "930144587787",
-  appId: "1:930144587787:web:3da4bc607c2f9fb5e0370e",
-  measurementId: "G-0RKPTJ2KMZ"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  databaseURL: import.meta.env.VITE_FIREBASE_DATABASE_URL,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
 };
 
 // Initialize Firebase
