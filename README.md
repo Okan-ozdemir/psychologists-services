@@ -50,3 +50,23 @@ The project is fully functional locally. To deploy:
 1. Run `npm run build` to create production build
 2. Deploy the `dist` folder to Netlify, GitHub Pages, or Vercel
 3. Update the live demo link above
+
+## Vercel Deployment (recommended)
+
+1. Push this repository to GitHub (or use existing remote).
+2. Go to https://vercel.com and import the GitHub repository.
+3. Set the framework preset to "Other" or allow Vercel to detect it. Ensure the build command is `npm run vercel-build` (or `npm run build`) and the output directory is `dist`.
+4. Add the following Environment Variables in Vercel (Project Settings → Environment Variables):
+	- `VITE_FIREBASE_API_KEY`
+	- `VITE_FIREBASE_AUTH_DOMAIN`
+	- `VITE_FIREBASE_DATABASE_URL`
+	- `VITE_FIREBASE_PROJECT_ID`
+	- `VITE_FIREBASE_STORAGE_BUCKET`
+	- `VITE_FIREBASE_MESSAGING_SENDER_ID`
+	- `VITE_FIREBASE_APP_ID`
+	- `VITE_FIREBASE_MEASUREMENT_ID` (optional)
+5. Deploy. Vercel will run the build and publish the `dist` folder.
+
+Notes:
+- If you prefer CLI deployment, install the Vercel CLI (`npm i -g vercel`) and run `vercel` from the project root.
+- This project uses Firebase Realtime Database and Auth; make sure your database rules and API keys are configured correctly.
