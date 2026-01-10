@@ -12,9 +12,17 @@ const App = () => {
   const [favorites, setFavorites] = useState([]);
 
   useEffect(() => {
-    // Initial load from "Firebase" simulation
-    setUser(mockAuth.getCurrentUser());
-    setFavorites(mockDb.getFavorites());
+    // Initial load from Firebase
+    const loadData = async () => {
+      console.log('Loading data from Firebase...');
+      const currentUser = mockAuth.getCurrentUser();
+      console.log('Current user:', currentUser);
+      setUser(currentUser);
+      const favs = await mockDb.getFavorites();
+      console.log('Favorites loaded:', favs);
+      setFavorites(favs);
+    };
+    loadData();
   }, []);
 
   const handleLogin = (userData) => {
@@ -26,13 +34,18 @@ const App = () => {
     setUser(null);
   };
 
-  const toggleFavorite = (psychologistId) => {
+  const toggleFavorite = async (psychologistId) => {
     if (!user) return false;
-    
+
     const isAdding = !favorites.includes(psychologistId);
-    const updated = mockDb.saveFavorite(psychologistId, isAdding);
-    setFavorites(updated);
-    return true;
+    try {
+      const updated = await mockDb.saveFavorite(psychologistId, isAdding);
+      setFavorites(updated);
+      return true;
+    } catch (error) {
+      console.error('Error toggling favorite:', error);
+      return false;
+    }
   };
 
   return (

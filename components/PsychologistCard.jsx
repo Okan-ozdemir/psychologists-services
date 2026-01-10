@@ -13,8 +13,8 @@ const PsychologistCard = ({
   const [isAppointmentOpen, setIsAppointmentOpen] = useState(false);
   const [showAuthWarning, setShowAuthWarning] = useState(false);
 
-  const handleHeartClick = () => {
-    const success = onToggleFavorite(psychologist.id);
+  const handleHeartClick = async () => {
+    const success = await onToggleFavorite(psychologist.id);
     if (!success) {
       setShowAuthWarning(true);
       setTimeout(() => setShowAuthWarning(false), 3000);
