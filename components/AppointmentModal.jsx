@@ -88,6 +88,7 @@ const AppointmentModal = ({ isOpen, onClose, psychologist }) => {
             <img
               src={psychologist.avatar_url}
               alt={psychologist.name}
+              onError={(e) => { e.currentTarget.src = 'https://via.placeholder.com/128x128?text=No+Image'; e.currentTarget.onerror = null }}
               className="w-16 h-16 rounded-full object-cover border-2 border-emerald-500/20"
             />
             <div>

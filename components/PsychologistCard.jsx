@@ -35,6 +35,7 @@ const PsychologistCard = ({
            <img
             src={psychologist.avatar_url}
             alt={psychologist.name}
+            onError={(e) => { e.currentTarget.src = 'https://via.placeholder.com/300x300?text=No+Image'; e.currentTarget.onerror = null }}
             className="w-full h-full object-cover rounded-[20px]"
           />
         </div>
