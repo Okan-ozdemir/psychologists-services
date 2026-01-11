@@ -1,6 +1,8 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from 'firebase/auth';
 import { getDatabase, ref, set, get, push, update, remove } from 'firebase/database';
+import { mockAuth, mockDb } from './mockFirebase.js';
+import { PSYCHOLOGISTS_DATA } from '../constants.js';
 
 // Firebase configuration
 const firebaseConfig = {
@@ -14,14 +16,20 @@ const firebaseConfig = {
   measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
 };
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-export const auth = getAuth(app);
-export const db = getDatabase(app);
+const useMock = !import.meta.env.VITE_FIREBASE_API_KEY;
+
+// Initialize Firebase only if not using mock
+let auth, db;
+if (!useMock) {
+  const app = initializeApp(firebaseConfig);
+  auth = getAuth(app);
+  db = getDatabase(app);
+}
 
 // Auth functions
-export const firebaseAuth = {
-  register: async (email, password, name) => {
+const realFirebaseAuth = {
+  register: async (data) => {
+    const { email, password, name } = data;
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
 
@@ -39,7 +47,8 @@ export const firebaseAuth = {
     };
   },
 
-  login: async (email, password) => {
+  login: async (data) => {
+    const { email, password } = data;
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
 
@@ -80,8 +89,10 @@ export const firebaseAuth = {
   }
 };
 
+export const firebaseAuth = useMock ? mockAuth : realFirebaseAuth;
+
 // Database functions
-export const firebaseDb = {
+const realFirebaseDb = {
   // Get all psychologists
   getPsychologists: async () => {
     const psychologistsRef = ref(db, 'psychologists');
@@ -129,3 +140,15 @@ export const firebaseDb = {
     return Object.keys(updatedData);
   }
 };
+
+const mockFirebaseDb = {
+  getPsychologists: async () => PSYCHOLOGISTS_DATA,
+  getFavorites: async (userId) => mockDb.getFavorites(),
+  toggleFavorite: async (userId, psychologistId) => {
+    const current = mockDb.getFavorites();
+    const isFavorite = current.includes(psychologistId);
+    return mockDb.saveFavorite(psychologistId, !isFavorite);
+  }
+};
+
+export const firebaseDb = useMock ? mockFirebaseDb : realFirebaseDb;

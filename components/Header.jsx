@@ -140,6 +140,7 @@ const Header = ({ user, onLogin, onLogout }) => {
         onClose={() => setIsAuthModalOpen(false)}
         mode={authMode}
         onAuthSuccess={onLogin}
+        onModeChange={setAuthMode}
       />
     </header>
   );

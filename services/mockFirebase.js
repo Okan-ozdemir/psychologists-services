@@ -20,6 +20,11 @@ export const mockAuth = {
   getCurrentUser: () => {
     const data = localStorage.getItem('psy_user');
     return data ? JSON.parse(data) : null;
+  },
+  onAuthStateChange: (callback) => {
+    const user = mockAuth.getCurrentUser();
+    callback(user);
+    // Mock doesn't support real-time changes
   }
 };
 

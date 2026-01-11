@@ -2,12 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { X, Eye, EyeOff } from 'lucide-react';
 import { firebaseAuth } from '../services/firebase.js';
 
-const AuthModal = ({ isOpen, onClose, mode, onAuthSuccess }) => {
+const AuthModal = ({ isOpen, onClose, mode, onAuthSuccess, onModeChange }) => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
-    password: '',
-    confirmPassword: ''
+    password: ''
   });
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -41,9 +40,6 @@ const AuthModal = ({ isOpen, onClose, mode, onAuthSuccess }) => {
       newErrors.password = 'Password must be at least 6 characters';
     }
 
-    if (mode === 'register' && formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = 'Passwords do not match';
-    }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -82,13 +78,16 @@ const AuthModal = ({ isOpen, onClose, mode, onAuthSuccess }) => {
       try {
         let user;
         if (mode === 'register') {
-          user = await firebaseAuth.register(formData.email, formData.password, formData.name);
+          user = await firebaseAuth.register({ email: formData.email, password: formData.password, name: formData.name });
+          setAuthError('Registration successful! Please log in.');
+          onModeChange('login');
+          setFormData({ name: '', email: '', password: '' });
         } else {
-          user = await firebaseAuth.login(formData.email, formData.password);
+          user = await firebaseAuth.login({ email: formData.email, password: formData.password });
+          onAuthSuccess(user);
+          onClose();
+          setFormData({ name: '', email: '', password: '' });
         }
-        onAuthSuccess(user);
-        onClose();
-        setFormData({ name: '', email: '', password: '', confirmPassword: '' });
       } catch (error) {
         setAuthError(error.message || 'An error occurred during authentication');
       } finally {
@@ -195,26 +194,6 @@ const AuthModal = ({ isOpen, onClose, mode, onAuthSuccess }) => {
               )}
             </div>
 
-            {mode === 'register' && (
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Confirm Password
-                </label>
-                <input
-                  type="password"
-                  name="confirmPassword"
-                  value={formData.confirmPassword}
-                  onChange={handleInputChange}
-                  className={`w-full px-4 py-3 rounded-xl border ${
-                    errors.confirmPassword ? 'border-red-300' : 'border-gray-200'
-                  } focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent`}
-                  placeholder="Confirm your password"
-                />
-                {errors.confirmPassword && (
-                  <p className="text-red-500 text-sm mt-1">{errors.confirmPassword}</p>
-                )}
-              </div>
-            )}
 
             {authError && (
               <p className="text-red-500 text-sm text-center">{authError}</p>
@@ -225,7 +204,7 @@ const AuthModal = ({ isOpen, onClose, mode, onAuthSuccess }) => {
               disabled={isLoading}
               className="w-full bg-emerald-600 text-white py-4 rounded-xl font-bold hover:bg-emerald-700 transition shadow-lg shadow-emerald-100 active:scale-95 disabled:opacity-70 disabled:cursor-not-allowed"
             >
-              {isLoading ? 'Processing...' : (mode === 'login' ? 'Log In' : 'Create Account')}
+              {isLoading ? 'Processing...' : (mode === 'login' ? 'Log In' : 'Sign Up')}
             </button>
           </form>
 
@@ -235,7 +214,7 @@ const AuthModal = ({ isOpen, onClose, mode, onAuthSuccess }) => {
               <button
                 type="button"
                 onClick={() => {
-                  setFormData({ name: '', email: '', password: '', confirmPassword: '' });
+                  setFormData({ name: '', email: '', password: '' });
                   setErrors({});
                   setAuthError('');
                 }}
